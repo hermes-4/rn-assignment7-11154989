@@ -1,23 +1,21 @@
 import { Text, View, StyleSheet, Image, ScrollView } from "react-native";
+import Header from "./Header";
 
 export default function Details({ route}) {
-    // const route = useRoute()
     const { title, image, description,price} = route.params; 
      
   return (
-    // <View style={styles.container}>
-    //   <Image source={{ uri: product.image }} style={styles.image} />
-    //   <Text style={styles.title}>{product.title}</Text>
-    //   <Text style={styles.description}>{product.description}</Text>
-    //   <Text style={styles.price}>${product.price}</Text>
-    // </View>
-    <ScrollView contentContainerStyle={styles.container}>
+    
+<View>
+  <Header/>
+<ScrollView contentContainerStyle={styles.container}>
     <Text style={styles.title}>{title}</Text>
     <Image source={{ uri: image }} style={styles.image} />
        <Text style={styles.description}>{description}</Text>
 
     <Text style={styles.price}>${price}</Text>
 </ScrollView>
+</View>
   );}
 
 const styles = StyleSheet.create({

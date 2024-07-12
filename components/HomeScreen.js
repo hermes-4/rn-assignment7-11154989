@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { CartContext } from "./Context";
 import { useNavigation } from "@react-navigation/native";
+import Header from "./Header";
 
 
 
@@ -48,7 +49,7 @@ export default function HomeScreen({navigation}) {
 
         fetchProducts();
     }, []);
-
+    mages
 
     const renderProduct = ({ item }) => (
       <TouchableOpacity key={item.id} style={styles.product} onPress={() => handleItemPress(item)}>
@@ -64,21 +65,8 @@ export default function HomeScreen({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <View style={styles.header}>
-          <Image source={require("../assets/Menu.png")} />
-          <View>
-            <Image source={require("../assets/Search.png")} />
-            <Image source={require("../assets/bag.png")} />
-          </View>
-        </View>
-        <View>
-          <Text>OUR STORY</Text>
-          <View>
-            <Image source={require("../assets/Menu.png")} />
-
-            <Image source={require("../assets/Menu.png")} />
-          </View>
-        </View>
+        <Header/>
+        
         <FlatList
           data={products}
           numColumns={2}
