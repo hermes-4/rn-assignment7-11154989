@@ -10,34 +10,37 @@ import {
   FlatList,
   TouchableOpacity
 } from "react-native";
-
-// import { CartContext } from "./Cart";
+import { CartContext } from "./Context";
 import { useNavigation } from "@react-navigation/native";
 
-// const {cartItems, addToCart}= useContext(CartContext)
 
 
-
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
 
   const [products, setProducts] = useState([]);
-    const navigation = useNavigation();
+    const { addToCart } = useContext(CartContext);
 
     const handleItemPress=(product)=>{
-        navigation.navigate("Details", product)
+        navigation.navigate("Details", {
+          title: product.title,
+          image: product.image,
+          price: product.price,
+          description: product.description
+
+        })
     }
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await fetch(
-                  "https://fakestoreapi.com/products"
+                  "https://fakestoreapi.com/products?limit=10"
                 );
                 const products = await response.json();
                 
                 setProducts(products);
                 
-                console.log(products)
+                // console.log(products)
             } catch (error) {
                 console.log(error);
             }
@@ -48,7 +51,7 @@ export default function HomeScreen() {
 
 
     const renderProduct = ({ item }) => (
-      <TouchableOpacity key={item.id} style={styles.productL} onPress={() => handleItemPress(item)}>
+      <TouchableOpacity key={item.id} style={styles.product} onPress={() => handleItemPress(item)}>
         <Image source={{ uri: item.image }} style={styles.image} />
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.price}>${item.price}</Text>
@@ -77,14 +80,13 @@ export default function HomeScreen() {
           </View>
         </View>
         <FlatList
-        data={products}
+          data={products}
           numColumns={2}
           keyExtractor={(product) => product.id.toString()}
           renderItem={renderProduct}
           showsVerticalScrollIndicator={false}
           style={styles.flatlist}
         />
-         
       </View>
     </SafeAreaView>
   );
@@ -113,16 +115,11 @@ const styles = StyleSheet.create({
     left: 10,
     position:"absolute"
   },
-  productL: {
+  product: {
     marginBottom: 20,
     alignItems: "center",
     position:"relative",
     width: "50%"
-  },
-  productR: {
-    marginBottom: 20,
-    alignItems: "center",
-    width: "47%",
   },
   image: {
     width: 150,

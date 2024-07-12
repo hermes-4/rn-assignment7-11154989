@@ -1,72 +1,196 @@
-import { createContext, useState, useEffect } from 'react'
+// import React, { useContext, useEffect, useState } from "react";
+// import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
+// import { CartProvider } from "./Context";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const CartContext = createContext()
+// const Cart = () => {
+//   const { cartItems, setCartItems } = useContext(CartProvider);
+//   const [items, setItems] = useState([]);
 
-export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState(localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [])
+//   useEffect(() => {
+//     const fetchCartItems = async () => {
+//       try {
+//         const storedCart = await AsyncStorage.getItem("cart");
+//         if (storedCart) {
+//           setItems(JSON.parse(storedCart));
+//         }
+//       } catch (error) {
+//         Alert.alert("Error", "An error occurred while fetching cart items");
+//       }
+//     };
 
-  const addToCart = (item) => {
-    const isItemInCart = cartItems.find((cartItem) => cartItem.id === item.id);
+//     fetchCartItems();
+//   }, [cartItems]);
 
-    if (isItemInCart) {
-      setCartItems(
-        cartItems.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        )
-      );
-    } else {
-      setCartItems([...cartItems, { ...item, quantity: 1 }]);
-    }
-  };
+//   const removeFromCart = async (item) => {
+//     const updatedCart = items.filter(cartItem => cartItem.id !== item.id);
+//     setItems(updatedCart);
+//     setCartItems(updatedCart);
+//     await AsyncStorage.setItem("cart", JSON.stringify(updatedCart));
+//   };
 
-  const removeFromCart = (item) => {
-    const isItemInCart = cartItems.find((cartItem) => cartItem.id === item.id);
+//   return (
+//     <View style={styles.container}>
+//       <Text style={styles.header}>Your Cart</Text>
+//       {items.length > 0 ? (
+//         items.map(item => (
+//           <View key={item.id} style={styles.cartItem}>
+//             <Image source={{ uri: item.image }} style={styles.image} />
+//             <View style={styles.details}>
+//               <Text style={styles.title}>{item.title}</Text>
+//               <Text style={styles.price}>${item.price}</Text>
+//               <TouchableOpacity 
+//                 style={styles.removeButton} 
+//                 onPress={() => removeFromCart(item)}
+//               >
+//                 <Text style={styles.removeButtonText}>Remove</Text>
+//               </TouchableOpacity>
+//             </View>
+//           </View>
+//         ))
+//       ) : (
+//         <Text style={styles.emptyText}>Your cart is empty.</Text>
+//       )}
+//     </View>
+//   );
+// };
 
-    if (isItemInCart.quantity === 1) {
-      setCartItems(cartItems.filter((cartItem) => cartItem.id !== item.id));
-    } else {
-      setCartItems(
-        cartItems.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity - 1 }
-            : cartItem
-        )
-      );
-    }
-  };
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     padding: 20,
+//   },
+//   header: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//     marginBottom: 20,
+//   },
+//   cartItem: {
+//     flexDirection: "row",
+//     marginBottom: 20,
+//     borderBottomWidth: 1,
+//     borderBottomColor: "#ccc",
+//     paddingBottom: 10,
+//   },
+//   image: {
+//     width: 100,
+//     height: 100,
+//     marginRight: 20,
+//   },
+//   details: {
+//     flex: 1,
+//     justifyContent: "center",
+//   },
+//   title: {
+//     fontSize: 18,
+//     fontWeight: "bold",
+//   },
+//   price: {
+//     fontSize: 16,
+//     color: "red",
+//     marginBottom: 10,
+//   },
+//   removeButton: {
+//     backgroundColor: "#FF6347",
+//     padding: 10,
+//     borderRadius: 5,
+//   },
+//   removeButtonText: {
+//     color: "#fff",
+//     textAlign: "center",
+//   },
+//   emptyText: {
+//     textAlign: "center",
+//     fontSize: 18,
+//     marginTop: 20,
+//   },
+// });
 
-  const clearCart = () => {
-    setCartItems([]);
-  };
+// export default Cart;
 
-  const getCartTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
 
-  useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
 
-  useEffect(() => {
-    const cartItems = localStorage.getItem("cartItems");
-    if (cartItems) {
-      setCartItems(JSON.parse(cartItems));
-    }
-  }, []);
+import React, { useContext } from "react";
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { CartContext } from "./Context";
+const Cart = () => {
+  const { cartItems, removeFromCart } = useContext(CartContext);
 
   return (
-    <CartContext.Provider
-      value={{
-        cartItems,
-        addToCart,
-        removeFromCart,
-        clearCart,
-        getCartTotal,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+    <View style={styles.container}>
+      <Text style={styles.header}>Your Cart</Text>
+      {cartItems.length > 0 ? (
+        cartItems.map(item => (
+          <View key={item.id} style={styles.cartItem}>
+            <Image source={{ uri: item.image }} style={styles.image} />
+            <View style={styles.details}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.price}>${item.price}</Text>
+              <TouchableOpacity 
+                style={styles.removeButton} 
+                onPress={() => removeFromCart(item)}
+              >
+                <Text style={styles.removeButtonText}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))
+      ) : (
+        <Text style={styles.emptyText}>Your cart is empty.</Text>
+      )}
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  cartItem: {
+    flexDirection: "row",
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingBottom: 10,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginRight: 20,
+  },
+  details: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  price: {
+    fontSize: 16,
+    color: "red",
+    marginBottom: 10,
+  },
+  removeButton: {
+    backgroundColor: "#FF6347",
+    padding: 10,
+    borderRadius: 5,
+  },
+  removeButtonText: {
+    color: "#fff",
+    textAlign: "center",
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 18,
+    marginTop: 20,
+  },
+});
+
+export default Cart;
